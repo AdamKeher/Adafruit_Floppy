@@ -90,7 +90,7 @@ uint8_t cmd_buffer[32], reply_buffer[128];
 uint8_t cmd_buff_idx = 0;
 
 #define GW_FIRMVER_MAJOR 1
-#define GW_FIRMVER_MINOR 0
+#define GW_FIRMVER_MINOR 1
 #define GW_MAXCMD      21
 #define GW_HW_MODEL    8  // Adafruity
 #define GW_HW_SUBMODEL 0  // Adafruit Floppy Generic
@@ -121,6 +121,8 @@ uint8_t cmd_buff_idx = 0;
 #define GW_CMD_SINKBYTES 19
 #define GW_CMD_GETPIN 20
 #define GW_CMD_GETPIN_TRACK0 26
+#define GW_CMD_GETPIN_WRITEPROT 28
+#define GW_CMD_GETPIN_CHANGE 34
 #define GW_ACK_OK (byte)0
 #define GW_ACK_BADCMD 1
 #define GW_ACK_NOINDEX 2
@@ -638,7 +640,14 @@ void loop() {
         reply_buffer[i++] = GW_ACK_OK;
         reply_buffer[i++] = !floppy->get_track0_sense();
         break;
-
+      case GW_CMD_GETPIN_WRITEPROT:
+        reply_buffer[i++] = GW_ACK_OK;
+        reply_buffer[i++] = !floppy->get_write_protect();
+        break;
+      case GW_CMD_GETPIN_CHANGE:
+        reply_buffer[i++] = GW_ACK_OK;
+        reply_buffer[i++] = !floppy->get_ready_sense();
+        break;
       default:
         // unknown pin, don't pretend we did it right
         reply_buffer[i++] = GW_ACK_BADPIN;
